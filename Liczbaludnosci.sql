@@ -1,6 +1,6 @@
 USE LiczbaLudnosci 
 
-
+-- Dodanie do tabel kolumn Wojew贸dztwo, IdPowiat. Dodanie do tabeli klucza g艂贸wnego. 
 SELECT * FROM Powiaty2020
 ALTER TABLE Powiaty2020
 ADD Wojewodztwo nvarchar(50);
@@ -8,8 +8,9 @@ ADD Wojewodztwo nvarchar(50);
 ALTER TABLE Powiaty2020
 ADD IdPowiat INT IDENTITY(1,1)
 
+-- Dodanie do powiat贸w nazw odpowiednich wojew贸dztw
 UPDATE Powiaty2020
-SET WOJEWODZTWO = 'Dolno渓箂kie'
+SET WOJEWODZTWO = 'Dolno畀撻浂kie'
 WHERE idpowiat between 1 and 31;
 
 UPDATE Powiaty2020
@@ -25,11 +26,11 @@ SET WOJEWODZTWO = 'Lubuskie'
 WHERE idpowiat between 81 and 95;
 
 UPDATE Powiaty2020
-SET WOJEWODZTWO = 'ｓdzkie'
+SET WOJEWODZTWO = '锟絛zkie'
 WHERE idpowiat between 96 and 120;
 
 UPDATE Powiaty2020
-SET WOJEWODZTWO = 'Ma硂polskie'
+SET WOJEWODZTWO = 'Ma閫檖olskie'
 WHERE idpowiat between 121 and 143;
 
 UPDATE Powiaty2020
@@ -53,15 +54,15 @@ SET WOJEWODZTWO = 'Pomorskie'
 WHERE idpowiat between 244 and 264;
 
 UPDATE Powiaty2020
-SET WOJEWODZTWO = '宭箂kie'
+SET WOJEWODZTWO = '飽ｉ浂kie'
 WHERE idpowiat between 265 and 301;
 
 UPDATE Powiaty2020
-SET WOJEWODZTWO = '寃i阾okrzyskie'
+SET WOJEWODZTWO = '飽甶鐨籵krzyskie'
 WHERE idpowiat between 302 and 316;
 
 UPDATE Powiaty2020
-SET WOJEWODZTWO = 'Warmi駍ko-mazurskie'
+SET WOJEWODZTWO = 'Warmi闆焝o-mazurskie'
 WHERE idpowiat between 317 and 338;
 
 UPDATE Powiaty2020
@@ -80,7 +81,7 @@ ALTER TABLE Powiaty2015
 ADD IdPowiat INT IDENTITY(1,1)
 
 UPDATE Powiaty2015
-SET WOJEWODZTWO = 'Dolno渓箂kie'
+SET WOJEWODZTWO = 'Dolno畀撻浂kie'
 WHERE idpowiat between 1 and 31;
 
 UPDATE Powiaty2015
@@ -96,11 +97,11 @@ SET WOJEWODZTWO = 'Lubuskie'
 WHERE idpowiat between 81 and 95;
 
 UPDATE Powiaty2015
-SET WOJEWODZTWO = 'ｓdzkie'
+SET WOJEWODZTWO = '锟絛zkie'
 WHERE idpowiat between 96 and 120;
 
 UPDATE Powiaty2015
-SET WOJEWODZTWO = 'Ma硂polskie'
+SET WOJEWODZTWO = 'Ma閫檖olskie'
 WHERE idpowiat between 121 and 143;
 
 UPDATE Powiaty2015
@@ -124,15 +125,15 @@ SET WOJEWODZTWO = 'Pomorskie'
 WHERE idpowiat between 244 and 264;
 
 UPDATE Powiaty2015
-SET WOJEWODZTWO = '宭箂kie'
+SET WOJEWODZTWO = '飽ｉ浂kie'
 WHERE idpowiat between 265 and 301;
 
 UPDATE Powiaty2015
-SET WOJEWODZTWO = '寃i阾okrzyskie'
+SET WOJEWODZTWO = '飽甶鐨籵krzyskie'
 WHERE idpowiat between 302 and 316;
 
 UPDATE Powiaty2015
-SET WOJEWODZTWO = 'Warmi駍ko-mazurskie'
+SET WOJEWODZTWO = 'Warmi闆焝o-mazurskie'
 WHERE idpowiat between 317 and 338;
 
 UPDATE Powiaty2015
@@ -149,11 +150,12 @@ ALTER COLUMN LiczbaLudnosci DECIMAL (10,0);
 ALTER TABLE Powiaty2015
 ALTER COLUMN LiczbaLudnosci DECIMAL (10,0);
 
+-- Stworzenie nowej tabeli na podstawie joina zawieraj膮cego dane o liczbie ludno艣ci w latach 2015 i 2020. Obliczenie % r贸偶nicy liczby ludno艣ci w latach 2015 i 2020
 SELECT t.* INTO DaneWyjsciowe
 FROM 
 (
 SELECT P2020.IdPowiat, P2020.Powiat, P2020.Wojewodztwo, P2020.LiczbaLudnosci AS LiczbaLudnosci2020, P2015.LiczbaLudnosci AS LiczbaLudnosci2015,
-(SELECT P2020.LiczbaLudnosci - P2015.LiczbaLudnosci) AS Roznica, (SELECT  ((P2020.LiczbaLudnosci - P2015.LiczbaLudnosci) / P2015.LiczbaLudnosci)*100) AS ProcRoznica
+(SELECT P2020.LiczbaLudnosci - P2015.LiczbaLudnosci) AS Roznica, (SELECT((P2020.LiczbaLudnosci - P2015.LiczbaLudnosci) / P2015.LiczbaLudnosci)*100) AS ProcRoznica
 FROM Powiaty2020 P2020
 JOIN Powiaty2015 P2015
 ON P2020.IdPowiat = P2015.IdPowiat
@@ -162,13 +164,17 @@ ON P2020.IdPowiat = P2015.IdPowiat
 
 SELECT * FROM DaneWyjsciowe
 ORDER BY ProcRoznica DESC
+-- zmiana typu danych w kolumnie ProcRoznica
 
 ALTER TABLE DaneWyjsciowe
-ALTER COLUMN PROCROZNICA FLOAT;
+ALTER COLUMN ProcRoznica FLOAT;
+
+-- zaokr膮glenie warto艣ci
 
 SELECT *, ROUND(ProcRoznica, 2) as ProcRoznicaZaokraglona
 FROM DaneWyjsciowe
 
+-- wszystkie dane pochodz膮 ze strony https://stat.gov.pl/
 
 
 
